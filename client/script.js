@@ -6,7 +6,8 @@ const chatBox = document.querySelector(".chat-box");
 const usernameInput = document.querySelector(".username-input");
 let socket;
 let myUsername = "";
-
+let connected = false;
+socket = io("http://localhost:8080", { reconnection: false });
 function connectMessages() {
   socket?.on("chatMessage", ({ username, message }) => {
     const messageDiv = document.createElement("div");
@@ -25,38 +26,40 @@ function connectMessages() {
 }
 
 joinBtn.addEventListener("click", () => {
-  if (!roomInput.value.trim()) {
-    alert("Please enter a room name.");
-    return;
+  if (!connected) {
+    if (!roomInput.value.trim()) {
+      alert("Please enter a room name.");
+      return;
+    }
+
+    if (!usernameInput.value.trim()) {
+      alert("Please enter a username.");
+      return;
+    }
+
+    socket.on("joinedRoom", ({ room, user }) => {
+      const joinDiv = document.createElement("div");
+      joinDiv.classList.add("join-message");
+      joinDiv.innerText = `${user} joined room: ${room}`;
+      chatBox.appendChild(joinDiv);
+    });
+
+    const room = roomInput.value.trim();
+    const username = usernameInput.value.trim();
+    myUsername = username;
+
+    socket.emit("joinRoom", { roomId: room, username });
+
+    socket.on("roomInvalid", ({ roomId: room, message }) => {
+      alert(`Cannot join room "${room}": ${message}`);
+      socket.disconnect();
+      return;
+    });
+    connected = true;
+    connectMessages();
+  } else {
+    return alert("Already connected to server.");
   }
-
-  if (!usernameInput.value.trim()) {
-    alert("Please enter a username.");
-    return;
-  }
-
-  socket = io("http://localhost:8080", { reconnection: false });
-
-  socket.on("joinedRoom", ({ room, user }) => {
-    const joinDiv = document.createElement("div");
-    joinDiv.classList.add("join-message");
-    joinDiv.innerText = `${user} joined room: ${room}`;
-    chatBox.appendChild(joinDiv);
-  });
-
-  const room = roomInput.value.trim();
-  const username = usernameInput.value.trim();
-  myUsername = username;
-
-  socket.emit("joinRoom", { roomId: room, username });
-
-  socket.on("roomInvalid", ({ roomId: room, message }) => {
-    alert(`Cannot join room "${room}": ${message}`);
-    socket.disconnect();
-    return;
-  });
-
-  connectMessages();
 });
 
 sendBtn.addEventListener("click", () => {
