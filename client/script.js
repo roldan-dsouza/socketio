@@ -5,14 +5,22 @@ const roomInput = document.querySelector(".room-input");
 const chatBox = document.querySelector(".chat-box");
 const usernameInput = document.querySelector(".username-input");
 let socket;
+let myUsername = "";
 
 function connectMessages() {
-  socket.on("chatMessage", ({ user, room, message }) => {
-    console.log(`Message in room ${room} from ${user}: ${message}`);
-    const msgDiv = document.createElement("div");
-    msgDiv.classList.add("message");
-    msgDiv.textContent = `${user}: ${message}`;
-    chatBox.appendChild(msgDiv);
+  socket?.on("chatMessage", ({ username, message }) => {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message");
+
+    if (username === myUsername) {
+      messageDiv.classList.add("my-message");
+    } else {
+      messageDiv.classList.add("other-message");
+    }
+
+    messageDiv.innerHTML = `<strong>${username}</strong>: ${message}`;
+    chatBox.appendChild(messageDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
   });
 }
 
@@ -27,10 +35,18 @@ joinBtn.addEventListener("click", () => {
     return;
   }
 
-  socket = io("http://localhost:8080");
+  socket = io("http://localhost:8080", { reconnection: false });
+
+  socket.on("joinedRoom", ({ room, user }) => {
+    const joinDiv = document.createElement("div");
+    joinDiv.classList.add("join-message");
+    joinDiv.innerText = `${user} joined room: ${room}`;
+    chatBox.appendChild(joinDiv);
+  });
 
   const room = roomInput.value.trim();
   const username = usernameInput.value.trim();
+  myUsername = username;
 
   socket.emit("joinRoom", { roomId: room, username });
 
@@ -48,4 +64,10 @@ sendBtn.addEventListener("click", () => {
   if (!message) return;
 
   socket.emit("chatMessage", { message });
+});
+
+addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    sendBtn.click();
+  }
 });

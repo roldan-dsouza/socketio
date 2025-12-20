@@ -160,3 +160,37 @@ body {
     width: 100%;
   }
 }
+
+.message {
+  padding: 10px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+/* Your messages */
+.my-message {
+  background: #2563eb;
+  color: white;
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Other users */
+.other-message {
+  background: #1e293b;
+  color: #baaaaa;
+  margin-right: auto;
+  text-align: left;
+}
+
+.join-message {
+  background: #1f2937; /* dark gray */
+  color: #9ca3af; /* soft gray text */
+  margin: 8px auto;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  text-align: center;
+}

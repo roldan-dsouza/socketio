@@ -24,14 +24,19 @@ io.on("connection", (socket) => {
       return;
     }
 
-    socket.join(room);
+    socket.join(room, user);
     console.log(`${user} joined room: ${room}`);
-    socket.emit("roomValid", { room });
+    socket.emit("roomValid", { room, user });
+
+    io.to(room).emit("joinedRoom", {
+      room,
+      user,
+    });
   });
 
   socket.on("chatMessage", ({ message }) => {
     console.log(`Message from ${user} in room ${room}: ${message}`);
-    io.emit("chatMessage", { user, room, message });
+    io.emit("chatMessage", { username: user, room, message });
   });
 });
 
