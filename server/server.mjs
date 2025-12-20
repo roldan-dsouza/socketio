@@ -13,10 +13,12 @@ const validRooms = ["alpha", "beta", "cyberpunk"];
 
 io.on("connection", (socket) => {
   console.log("a user connected");
-
-  socket.on("joinRoom", ({ room }) => {
+  let room = null;
+  socket.on("joinRoom", ({ roomId }) => {
+    room = roomId;
+    console.log(`User attempting to join room: ${room}`);
     if (!validRooms.includes(room)) {
-      socket.emit("roomInvalid", "Room does not exist!");
+      socket.emit("roomInvalid", { room, message: "Room does not exist!" });
       return;
     }
 
@@ -25,7 +27,7 @@ io.on("connection", (socket) => {
     socket.emit("roomValid", { room });
   });
 
-  socket.on("chatMessage", ({ room, message }) => {
+  socket.on("chatMessage", ({ message }) => {
     io.to(room).emit("chatMessage", { room, message });
   });
 });
