@@ -36,6 +36,7 @@ joinBtn.addEventListener("click", () => {
 
   socket.on("roomInvalid", ({ roomId: room, message }) => {
     alert(`Cannot join room "${room}": ${message}`);
+    socket.disconnect();
     return;
   });
 
