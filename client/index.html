@@ -15,14 +15,20 @@
 
       <!-- Controls -->
       <div class="controls">
-        <input type="text" placeholder="Room ID" class="room-input" />
-        <input
-          type="text"
-          placeholder="Type a message..."
-          class="message-input"
-        />
-        <button class="btn join">Join Room</button>
-        <button class="btn send">Send</button>
+        <div class="top-row">
+          <input type="text" placeholder="Room ID" class="room-input" />
+          <input type="text" placeholder="Username" class="username-input" />
+          <button class="btn join">Join</button>
+        </div>
+
+        <div class="bottom-row">
+          <input
+            type="text"
+            placeholder="Type a message..."
+            class="message-input"
+          />
+          <button class="btn send">Send</button>
+        </div>
         <script
           src="https://cdn.socket.io/4.7.2/socket.io.min.js"
           crossorigin="anonymous"

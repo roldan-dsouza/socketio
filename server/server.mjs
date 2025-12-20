@@ -14,24 +14,27 @@ const validRooms = ["alpha", "beta", "cyberpunk"];
 io.on("connection", (socket) => {
   console.log("a user connected");
   let room = null;
-  socket.on("joinRoom", ({ roomId }) => {
+  let user = null;
+  socket.on("joinRoom", ({ roomId, username }) => {
     room = roomId;
-    console.log(`User attempting to join room: ${room}`);
+    user = username;
+    console.log(`${user} attempting to join room: ${room}`);
     if (!validRooms.includes(room)) {
       socket.emit("roomInvalid", { room, message: "Room does not exist!" });
       return;
     }
 
     socket.join(room);
-    console.log(`User joined room: ${room}`);
+    console.log(`${user} joined room: ${room}`);
     socket.emit("roomValid", { room });
   });
 
   socket.on("chatMessage", ({ message }) => {
-    io.to(room).emit("chatMessage", { room, message });
+    console.log(`Message from ${user} in room ${room}: ${message}`);
+    io.emit("chatMessage", { user, room, message });
   });
 });
 
 server.listen(8080, () => {
-  console.log("Server running on http://localhost:3000");
+  console.log("Server running on http://localhost:8080");
 });

@@ -43,12 +43,80 @@ body {
 
 /* Bottom controls */
 .controls {
-  display: grid;
-  grid-template-columns: 1fr 2fr auto auto;
-  gap: 10px;
   padding: 12px;
   background: #020617;
   border-top: 1px solid #1e293b;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Top row: room + username + join */
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+}
+
+/* Bottom row: message + send */
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+.controls input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #1e293b;
+  color: #e5e7eb;
+  font-size: 14px;
+}
+
+.controls input::placeholder {
+  color: #94a3b8;
+}
+
+.message-input {
+  font-size: 15px;
+}
+
+/* Buttons */
+.btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.join {
+  background: #2563eb;
+  color: white;
+}
+
+.send {
+  background: #16a34a;
+  color: white;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .top-row {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-row {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    width: 100%;
+  }
 }
 
 .controls input {
