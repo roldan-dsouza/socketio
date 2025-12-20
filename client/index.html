@@ -2,236 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Cyberpunk Chat</title>
-    <style>
-      /* Background */
-      body {
-        font-family: "Orbitron", sans-serif;
-        background: radial-gradient(
-          circle at top left,
-          #0d0d0d,
-          #1a1a2e,
-          #0d0d0d
-        );
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px;
-        min-height: 100vh;
-        overflow: hidden;
-      }
-
-      /* Neon frame container */
-      .container {
-        width: 420px;
-        max-width: 95%;
-        background: rgba(10, 10, 25, 0.95);
-        border-radius: 16px;
-        padding: 50px;
-        border: 2px solid #00fff7;
-        box-shadow: 0 0 20px #00fff7, 0 0 40px #ff00cc inset;
-        position: relative;
-        overflow: hidden;
-      }
-
-      /* Animated neon scanlines */
-      .container::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0.04) 0px,
-          rgba(255, 255, 255, 0.04) 2px,
-          transparent 2px,
-          transparent 4px
-        );
-        pointer-events: none;
-        animation: flicker 2s infinite;
-      }
-
-      @keyframes flicker {
-        0%,
-        19%,
-        21%,
-        23%,
-        25%,
-        54%,
-        56%,
-        100% {
-          opacity: 0.2;
-        }
-        20%,
-        24%,
-        55% {
-          opacity: 0.4;
-        }
-      }
-
-      /* Titles */
-      h2,
-      h3 {
-        text-align: center;
-        font-family: "Share Tech Mono", monospace;
-        letter-spacing: 3px;
-        color: #00fff7;
-        text-shadow: 0 0 10px #00fff7, 0 0 20px #ff00cc;
-        margin-bottom: 12px;
-      }
-
-      /* Chat box */
-      #chatBox {
-        border: 1px solid #ff00cc;
-        border-radius: 8px;
-        height: 280px;
-        overflow-y: auto;
-        padding: 12px;
-        background: rgba(15, 15, 35, 0.9);
-        margin-bottom: 12px;
-        box-shadow: 0 0 12px #00fff7 inset, 0 0 20px #ff00cc44 inset;
-        font-family: "Share Tech Mono", monospace;
-      }
-
-      /* Messages */
-      .message {
-        padding: 8px 14px;
-        margin: 8px 0;
-        border-radius: 8px;
-        background: linear-gradient(90deg, #ff00cc, #00fff7);
-        color: #111;
-        font-weight: bold;
-        text-transform: uppercase;
-        box-shadow: 0 0 10px #00fff7aa;
-      }
-
-      .message.you {
-        background: linear-gradient(90deg, #00fff7, #ff00cc);
-        align-self: flex-end;
-        text-align: right;
-      }
-
-      /* Inputs & buttons */
-      input,
-      button {
-        padding: 12px;
-        border-radius: 6px;
-        font-size: 1em;
-        font-family: "Share Tech Mono", monospace;
-        outline: none;
-        border: none;
-        transition: all 0.2s ease;
-      }
-
-      input {
-        flex: 1;
-        margin-right: 8px;
-        border: 2px solid #00fff7;
-        background: rgba(20, 20, 40, 0.85);
-        color: #fff;
-      }
-
-      input:focus {
-        border-color: #ff00cc;
-        box-shadow: 0 0 8px #ff00cc, 0 0 12px #00fff7;
-      }
-
-      button {
-        background: linear-gradient(90deg, #ff00cc, #00fff7);
-        color: #111;
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 0 12px #ff00cc88;
-        text-transform: uppercase;
-      }
-
-      button:hover {
-        background: linear-gradient(90deg, #00fff7, #ff00cc);
-        box-shadow: 0 0 18px #00fff788;
-      }
-
-      /* Layout tweaks */
-      .input-group {
-        display: flex;
-        align-items: center;
-      }
-    </style>
-
-    <!-- Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Socket.IO client -->
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <div class="container">
-      <h2>Neon Chatroom</h2>
-      <div id="roomSection">
-        <div class="input-group">
-          <input type="text" id="roomInput" placeholder="Enter room name" />
-          <button onclick="joinRoom()">Join</button>
-        </div>
+    <div class="chat-container">
+      <!-- Chat messages -->
+      <div class="chat-box" id="chatBox">
+        <div class="message">Welcome to the room 👋</div>
       </div>
 
-      <div id="chatSection" style="display: none">
-        <h3 id="roomTitle"></h3>
-        <div id="chatBox"></div>
-        <div class="input-group">
-          <input
-            type="text"
-            id="messageInput"
-            placeholder="Type a message..."
-          />
-          <button onclick="sendMessage()">Send</button>
-        </div>
+      <!-- Controls -->
+      <div class="controls">
+        <input type="text" placeholder="Room ID" class="room-input" />
+        <input
+          type="text"
+          placeholder="Type a message..."
+          class="message-input"
+        />
+        <button class="btn join">Join Room</button>
+        <button class="btn send">Send</button>
+        <script
+          src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+          crossorigin="anonymous"
+        ></script>
+        <script type="module" src="script.js"></script>
       </div>
     </div>
-
-    <script>
-      let currentRoom = "";
-      let socket = io("http://localhost:8080");
-
-      // Show message when joining fails
-      socket.on("roomInvalid", (msg) => {
-        alert(msg || "Invalid room!");
-      });
-
-      // When join is successful
-      socket.on("roomValid", ({ room }) => {
-        currentRoom = room;
-        document.getElementById("roomTitle").innerText = "Room: " + room;
-        document.getElementById("roomSection").style.display = "none";
-        document.getElementById("chatSection").style.display = "block";
-      });
-
-      // When a new message arrives
-      socket.on("chatMessage", (data) => {
-        const chatBox = document.getElementById("chatBox");
-        const msgDiv = document.createElement("div");
-        msgDiv.className = "message";
-        msgDiv.innerText = `${data.room}: ${data.message}`;
-        chatBox.appendChild(msgDiv);
-        chatBox.scrollTop = chatBox.scrollHeight;
-      });
-
-      function joinRoom() {
-        const room = document.getElementById("roomInput").value.trim();
-        if (!room) return alert("Enter a room name!");
-        socket.emit("joinRoom", { room });
-      }
-
-      function sendMessage() {
-        const input = document.getElementById("messageInput");
-        const message = input.value.trim();
-        if (!message) return;
-        socket.emit("chatMessage", { room: currentRoom, message });
-        input.value = "";
-      }
-    </script>
   </body>
 </html>
