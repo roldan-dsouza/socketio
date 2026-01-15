@@ -6,8 +6,7 @@ const chatBox = document.querySelector(".chat-box");
 const usernameInput = document.querySelector(".username-input");
 let socket;
 let myUsername = "";
-let connected = false;
-socket = io("http://localhost:8080", { reconnection: false });
+
 function connectMessages() {
   socket?.on("chatMessage", ({ username, message }) => {
     const messageDiv = document.createElement("div");
@@ -26,7 +25,10 @@ function connectMessages() {
 }
 
 joinBtn.addEventListener("click", () => {
-  if (!connected) {
+  if (!socket) {
+    socket = io("http://localhost:8080", {
+      autoConnect: true,
+    });
     if (!roomInput.value.trim()) {
       alert("Please enter a room name.");
       return;
@@ -51,14 +53,15 @@ joinBtn.addEventListener("click", () => {
     socket.emit("joinRoom", { roomId: room, username });
 
     socket.on("roomInvalid", ({ roomId: room, message }) => {
-      alert(`Cannot join room "${room}": ${message}`);
       socket.disconnect();
+      alert(`Cannot join room "${room}": ${message}`);
+
       return;
     });
-    connected = true;
+
     connectMessages();
   } else {
-    return alert("Already connected to server.");
+    alert("Already connected to a room.");
   }
 });
 
